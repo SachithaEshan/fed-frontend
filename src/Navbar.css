@@ -1,0 +1,29 @@
+
+.nav-div1{
+    display: flex;
+    column-gap: 4rem;
+}
+.nav-a1{
+    font-weight: 600;
+    font-size: 1.875rem;
+}
+.nav-div2, .cart-section{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cart-link{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+.cart-count{
+    font-size: 1.125rem;
+}
+.cart-Icone{
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+}
