@@ -1,11 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 
 function ProductCard(props) {
   
+  const[num,setNum]=useState(0);
 
   const handleClick = (e) => {
+    setNum(num+1);
+    console.log(num);
     console.log(e);
     alert(`Buy Now Clicked in ${props.name}`);
   };
@@ -18,7 +22,7 @@ function ProductCard(props) {
       <div className="flex px-4 mt-4  items-center justify-between">
         <h2 className="text-2xl  font-semibold">{props.name}</h2>
         <span className="block text-lg font-medium">${props.price}</span>
-        
+        <p>{num}</p>
       </div>
       <div className="px-4 mt-2">
         <p className="text-sm">{props.description}</p>
