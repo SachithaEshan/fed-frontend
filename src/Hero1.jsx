@@ -1,4 +1,5 @@
 //import"./Hero1.css";
+import { Button } from "@/components/ui/button";
 
 function Hero() {
     return(
@@ -14,20 +15,29 @@ function Hero() {
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius quos
                     suscipit est autem quia? Voluptatem?
                     </p>
-                    <a to="/shop" className="px-4 py-2 bg-black text-white font-medium rounded-md w-fit"> shop now</a>
+                    <Button className="w-fit" asChild>
+                     <a to="/shop">Shop Now</a>
+                    </Button>
                 </div>
-                <div className="relative">
+                {/* <div className="relative">
                     <img
                     src="https://fee-storefront.vercel.app/assets/hero/hero.jpg"
                      alt="120"
                      className="w-full h-full object-cover "
                      
                     />
-                </div>
+                </div> */}
+                 <div className="hero-image-container">
+                     <img
+                         src="https://fee-storefront.vercel.app/assets/hero/hero.jpg"
+                        alt=""
+                        className="hero-image"
+                  />
+                 </div>
             </div>
         </section>
     </>
-    )
+    );
 }
 
 export default Hero;
