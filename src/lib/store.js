@@ -4,6 +4,7 @@ import cartReducer from "./features/cartSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import savedItemsReducer from "./features/savedItemsSlice";
 
+
 import { Api } from "./api";
 
 export const store = configureStore({
@@ -18,3 +19,19 @@ export const store = configureStore({
 });
 
 setupListeners(store.dispatch);
+
+export const fetchProducts = async () => {
+  const response = await fetch("http://localhost:8000/Api/products");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch products: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const fetchCategories = async () => {
+  const response = await fetch("http://localhost:8000/Api/categories");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch categories: ${response.statusText}`);
+  }
+  return response.json();
+};

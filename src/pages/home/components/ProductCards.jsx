@@ -7,12 +7,14 @@ function ProductCards(props) {
       {props.products.map((product) => {
         return (
           <ProductCard
-          key={product._id}
-          _id={product._id}
-          name={product.name}
-          price={product.price}
-          image={product.image}
-          description={product.description}
+            key={product._id}
+            _id={product._id}
+            name={product.name}
+            price={product.price}
+            image={product.image}
+            description={product.description}
+            stock={product.stock}
+            inventory={product.inventory}
           />
         );
       })}
@@ -25,9 +27,11 @@ ProductCards.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      price: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
       image: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      stock: PropTypes.number,
+      inventory: PropTypes.number,
     })
   ).isRequired,
 };

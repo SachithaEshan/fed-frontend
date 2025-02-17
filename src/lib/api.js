@@ -2,19 +2,34 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // Define a service using a base URL and expected endpoints
+// export const Api = createApi({
+//   reducerPath: "Api",
+//   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/Api/" }),
+//   prepareHeaders: async (headers, { getState }) => {
+//     const token = await window.Clerk.session.getToken();
+//     console.log(token);
+
+//     if (token) {
+//       headers.set("Authorization", `Bearer ${token}`);
+//     }
+
+//     return headers;
+//   },
 export const Api = createApi({
   reducerPath: "Api",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/Api/" }),
-  prepareHeaders: async (headers, { getState }) => {
-    const token = await window.Clerk.session.getToken();
-    console.log(token);
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:8000/Api/",
+    prepareHeaders: async (headers, { getState }) => {
+      const token = await window.Clerk?.session?.getToken();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
 
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+      return headers;
+    },
+  }),
 
-    return headers;
-  },
+
   endpoints: (builder) => ({
     getProducts: builder.query({
       query: () => `products`,
@@ -30,6 +45,19 @@ export const Api = createApi({
         url: `orders`,
         method: "POST",
         body,
+      }),
+    }),
+    saveFavoriteItem: builder.mutation({
+      query: (productData) => ({
+        url: 'favorites',
+        method: 'POST',
+        body: productData
+      }),
+    }),
+    removeFavoriteItem: builder.mutation({
+      query: (productId) => ({
+        url: `favorites/${productId}`,
+        method: 'DELETE',
       }),
     }),
   }),
