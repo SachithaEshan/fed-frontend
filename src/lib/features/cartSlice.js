@@ -29,10 +29,22 @@ export const cartSlice = createSlice({
     clearCart:(state)=>{
       state.value = [];
     },
+    incrementQuantity: (state, action) => {
+      const item = state.value.find(item => item.product._id === action.payload);
+      if (item) {
+        item.quantity += 1;
+      }
+    },
+    decrementQuantity: (state, action) => {
+      const item = state.value.find(item => item.product._id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToCart, removeItem , clearCart} = cartSlice.actions;
+export const { addToCart, removeItem, clearCart, incrementQuantity, decrementQuantity } = cartSlice.actions;
 
 export default cartSlice.reducer;

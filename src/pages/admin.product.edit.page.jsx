@@ -1,28 +1,58 @@
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from 'react-hot-toast';
-import { Link } from "react-router-dom";
 
-function AdminProductCreatePage() {
+function AdminProductEditPage() {
     const { isLoaded, isSignedIn, user } = useUser();
     const { getToken } = useAuth();
     const navigate = useNavigate();
+    const { id } = useParams();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [newCategory, setNewCategory] = useState("");
+    const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
         price: "",
         description: "",
-        categoryId: "",
+        category: "",
         image: "",
         inventory: ""
     });
 
     useEffect(() => {
+        fetchProduct();
         fetchCategories();
-    }, []);
+    }, [id]);
+
+    const fetchProduct = async () => {
+        try {
+            const token = await getToken();
+            const response = await fetch(`http://localhost:8000/Api/products/${id}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', errorText);
+                throw new Error('Failed to fetch product');
+            }
+
+            const data = await response.json();
+            setFormData(data);
+        } catch (error) {
+            toast.error('Failed to load product');
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -46,6 +76,37 @@ function AdminProductCreatePage() {
         }
     };
 
+    const handleAddNewCategory = async () => {
+        if (!newCategory.trim()) return;
+
+        try {
+            const token = await getToken();
+            const response = await fetch('http://localhost:8000/Api/categories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ name: newCategory.trim() })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add category');
+            }
+
+            const addedCategory = await response.json();
+            setCategories(prev => [...prev, addedCategory]);
+            setFormData(prev => ({ ...prev, category: addedCategory.name }));
+            setNewCategory("");
+            setShowNewCategoryInput(false);
+            toast.success('Category added successfully!');
+        } catch (error) {
+            toast.error('Failed to add category');
+            console.error(error);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -60,8 +121,8 @@ function AdminProductCreatePage() {
         
         try {
             const token = await getToken();
-            const response = await fetch('http://localhost:8000/Api/products', {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8000/Api/products/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -73,20 +134,20 @@ function AdminProductCreatePage() {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('API Error:', errorText);
-                throw new Error('Failed to create product');
+                throw new Error('Failed to update product');
             }
 
-            toast.success('Product created successfully!');
-            navigate('/admin');
+            toast.success('Product updated successfully!');
+            navigate('/admin'); // Navigate to admin dashboard
         } catch (error) {
-            toast.error(error.message || 'Failed to create product');
-            console.error('Error creating product:', error);
+            toast.error(error.message || 'Failed to update product');
+            console.error(error);
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    if (!isLoaded) {
+    if (!isLoaded || isLoading) {
         return <main className="px-8">Loading...</main>;
     }
 
@@ -100,7 +161,7 @@ function AdminProductCreatePage() {
 
     return (
         <main className="px-8 py-6">
-            <h1 className="mb-8 text-4xl font-bold">Create Product</h1>
+            <h1 className="mb-8 text-4xl font-bold">Edit Product</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
                 <div>
@@ -144,31 +205,60 @@ function AdminProductCreatePage() {
                 </div>
 
                 <div>
-                    <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700">Category</label>
-                    <select
-                        id="categoryId"
-                        name="categoryId"
-                        value={formData.categoryId}
-                        onChange={handleChange}
-                        className="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300"
-                        required
-                    >
-                        <option value="">Select a category</option>
-                        {categories.map(category => (
-                            <option key={category._id} value={category._id}>
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                    <div className="mt-8 mb-8">
-                    <Link 
-                         to="/admin/categories"
-                         className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700"
-                        >
-                              Manage Categories
-                    </Link>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+                    <div className="flex gap-2">
+                        {!showNewCategoryInput ? (
+                            <>
+                                <select
+                                    id="category"
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                    className="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300"
+                                    required
+                                >
+                                    <option value="">Select a category</option>
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewCategoryInput(true)}
+                                    className="px-4 py-2 mt-1 text-white bg-green-600 rounded-md hover:bg-green-700"
+                                >
+                                    Add New
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <input
+                                    type="text"
+                                    value={newCategory}
+                                    onChange={(e) => setNewCategory(e.target.value)}
+                                    className="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300"
+                                    placeholder="Enter new category"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddNewCategory}
+                                    className="px-4 py-2 mt-1 text-white bg-green-600 rounded-md hover:bg-green-700"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowNewCategoryInput(false);
+                                        setNewCategory("");
+                                    }}
+                                    className="px-4 py-2 mt-1 text-white bg-gray-500 rounded-md hover:bg-gray-600"
+                                >
+                                    Cancel
+                                </button>
+                            </>
+                        )}
                     </div>
-
                 </div>
 
                 <div>
@@ -208,7 +298,7 @@ function AdminProductCreatePage() {
                                 : 'bg-blue-600 hover:bg-blue-700'
                             }`}
                     >
-                        {isSubmitting ? 'Creating...' : 'Create Product'}
+                        {isSubmitting ? 'Updating...' : 'Update Product'}
                     </button>
                     <button
                         type="button"
@@ -223,4 +313,4 @@ function AdminProductCreatePage() {
     );
 }
 
-export default AdminProductCreatePage;
+export default AdminProductEditPage; 

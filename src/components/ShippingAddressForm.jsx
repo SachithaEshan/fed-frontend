@@ -41,8 +41,28 @@ const ShippingAddressForm = ({ cart }) => {
   console.log(cart);
 
   function handleSubmit(values) {
+    // Log the cart data to verify structure
+    console.log('Cart data:', cart);
+
+    const orderItems = cart.map(item => ({
+      product: {
+        _id: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        image: item.product.image,
+        description: item.product.description,
+      },
+      quantity: item.quantity
+    }));
+
+    // Log the formatted order data
+    console.log('Formatted order data:', {
+      items: orderItems,
+      shippingAddress: values
+    });
+
     createOrder({
-      items: cart,
+      items: orderItems,
       shippingAddress: {
         line_1: values.line_1,
         line_2: values.line_2,
@@ -52,8 +72,8 @@ const ShippingAddressForm = ({ cart }) => {
         phone: values.phone,
       },
     });
+    
     navigate("/shop/payment");
-    console.log(values);
   }
 
   return (
@@ -79,7 +99,7 @@ const ShippingAddressForm = ({ cart }) => {
               name="line_2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Line 1</FormLabel>
+                  <FormLabel>Line 2</FormLabel>
                   <FormControl>
                     <Input placeholder="Main St" {...field} />
                   </FormControl>
