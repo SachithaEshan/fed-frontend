@@ -44,12 +44,13 @@ export const Api = createApi({
     }),
     createOrder: builder.mutation({
       query: (orderData) => {
-        // First ensure we have a proper order structure
         const formattedOrder = {
-          items: orderData.items,
-          totalAmount: orderData.totalAmount,
-          address: orderData.address, // Send as address instead of addressId
-          status: 'pending'
+          items: orderData.items.map(item => ({
+            productId: item.product._id,
+            quantity: item.quantity,
+            price: parseFloat(item.product.price)
+          })),
+          shippingAddress: orderData.address, // Changed from address to shippingAddress
         };
 
         return {
@@ -65,11 +66,11 @@ export const Api = createApi({
       },
       async onQueryStarted(args, { queryFulfilled }) {
         try {
-          await queryFulfilled;
+          const response = await queryFulfilled;
+          console.log('Order created successfully:', response);
         } catch (error) {
           console.error('Order creation failed:', error);
-          const errorMessage = error.error?.data?.message || 'Failed to create order';
-          throw new Error(errorMessage);
+          throw new Error('Failed to create order');
         }
       }
     }),
