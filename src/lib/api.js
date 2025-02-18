@@ -47,7 +47,20 @@ export const Api = createApi({
         url: `orders`,
         method: "POST",
         body,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        validateStatus: (response, result) => {
+          if (response.status >= 500) {
+            console.error('Server Error:', result);
+          }
+          return response.status === 200;
+        },
       }),
+      async onError(err, variables, context) {
+        console.error('Order creation failed:', err);
+        throw new Error(err.data?.message || 'Failed to create order');
+      }
     }),
     saveFavoriteItem: builder.mutation({
       query: (productData) => ({
