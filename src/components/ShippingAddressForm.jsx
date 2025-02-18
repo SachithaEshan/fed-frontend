@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCreateOrderMutation } from "@/lib/api";
 
 const formSchema = z.object({
@@ -172,7 +172,9 @@ const ShippingAddressForm = ({ cart }) => {
             />
           </div>
           <div className="mt-4">
+            <Link to="/shop/payment">
             <Button type="submit">Proceed to Payment</Button>
+            </Link>
           </div>
         </form>
       </Form>
