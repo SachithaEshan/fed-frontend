@@ -43,11 +43,31 @@ export const Api = createApi({
       query: (id) =>`orders/${id}`,
     }),
     createOrder: builder.mutation({
-      query: (body) => ({
-        url: `orders`,
-        method: "POST",
-        body,
-      }),
+      query: (orderData) => {
+        const formattedOrder = {
+          items: orderData.items.map(item => ({
+            product: {
+              _id: item.product._id,
+              name: item.product.name,
+              price: Number(item.product.price),
+              image: item.product.image,
+              description: item.product.description
+            },
+            quantity: item.quantity
+          })),
+          shippingAddress: orderData.shippingAddress
+        };
+
+        return {
+          url: 'orders',
+          method: 'POST',
+          body: formattedOrder,
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+      }
     }),
     saveFavoriteItem: builder.mutation({
       query: (productData) => ({

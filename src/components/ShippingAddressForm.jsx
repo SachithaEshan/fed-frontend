@@ -54,7 +54,14 @@ const ShippingAddressForm = ({ cart }) => {
 
     const orderData = {
       items: orderItems,
-      shippingAddress: values
+      shippingAddress: {
+        line_1: values.line_1,
+        line_2: values.line_2,
+        city: values.city,
+        state: values.state,
+        zip_code: values.zip_code,
+        phone: values.phone
+      }
     };
 
     try {
@@ -66,10 +73,9 @@ const ShippingAddressForm = ({ cart }) => {
         })
         .catch((error) => {
           console.error('Order creation failed:', error);
-          // Show error to user
           form.setError('root', {
             type: 'manual',
-            message: error.message || 'Failed to create order'
+            message: error.data?.message || 'Failed to create order'
           });
         });
     } catch (error) {
