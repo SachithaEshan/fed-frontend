@@ -64,7 +64,8 @@ export const Api = createApi({
           body: formattedOrder,
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${window.Clerk?.session?.getToken()}`
           }
         };
       }
