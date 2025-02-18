@@ -44,6 +44,9 @@ export const Api = createApi({
     }),
     createOrder: builder.mutation({
       query: (orderData) => {
+        // Log the order data for debugging
+        console.log('Sending order data:', orderData);
+
         const formattedOrder = {
           items: orderData.items.map(item => ({
             product: {
@@ -58,6 +61,9 @@ export const Api = createApi({
           shippingAddress: orderData.shippingAddress
         };
 
+        // Log the formatted data
+        console.log('Formatted order data:', formattedOrder);
+
         return {
           url: 'orders',
           method: 'POST',
@@ -65,9 +71,18 @@ export const Api = createApi({
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.Clerk?.session?.getToken()}`
+            'Accept': 'application/json'
           }
         };
+      },
+      // Add error handling
+      async onQueryStarted(arg, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error('Detailed error:', error);
+          throw error;
+        }
       }
     }),
     saveFavoriteItem: builder.mutation({
