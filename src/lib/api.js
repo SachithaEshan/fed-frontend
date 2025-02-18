@@ -43,38 +43,11 @@ export const Api = createApi({
       query: (id) =>`orders/${id}`,
     }),
     createOrder: builder.mutation({
-      query: (orderData) => {
-        // Format the order data to match backend expectations
-        const formattedOrder = {
-          items: orderData.items.map(item => ({
-            product: item.product,  // Keep the full product object
-            quantity: item.quantity
-          })),
-          shippingAddress: orderData.shippingAddress
-        };
-
-        return {
-          url: `orders`,
-          method: "POST",
-          body: formattedOrder,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${window.Clerk?.session?.getToken()}` // Add auth token
-          },
-          credentials: 'include'
-        };
-      },
-      async onQueryStarted(args, { queryFulfilled }) {
-        try {
-          const response = await queryFulfilled;
-          console.log('Order created successfully:', response.data);
-          return response.data;
-        } catch (error) {
-          console.error('Order creation error details:', error.error);
-          throw new Error(error.error?.message || 'Failed to create order');
-        }
-      }
+      query: (body) => ({
+        url: `orders`,
+        method: "POST",
+        body,
+      }),
     }),
     saveFavoriteItem: builder.mutation({
       query: (productData) => ({
