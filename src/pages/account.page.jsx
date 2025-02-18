@@ -77,12 +77,12 @@ function AccountPage() {
                     <div className="p-6 bg-white rounded-lg shadow-sm">
                         <h3 className="mb-4 text-lg font-semibold">Account Settings</h3>
                         <div className="space-y-4">
-                            <button
+                            {/* <button
                                 onClick={() => user.update({})}
                                 className="px-4 py-2 w-full text-sm font-medium text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
                             >
                                 Update Profile
-                            </button>
+                            </button> */}
                             <button
                                 onClick={() => window.location.href = '/orders'}
                                 className="px-4 py-2 w-full text-sm font-medium text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
