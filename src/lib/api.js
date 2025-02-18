@@ -15,10 +15,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 //     return headers;
 //   },
+const BASE_URL = 'https://fed-storefront-backend-sachitha.onrender.com/Api';
+
 export const Api = createApi({
   reducerPath: "Api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://fed-storefront-backend-sachitha.onrender.com/Api/",
+    baseUrl: BASE_URL,
     prepareHeaders: async (headers, { getState }) => {
       const token = await window.Clerk?.session?.getToken();
       if (token) {

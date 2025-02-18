@@ -15,7 +15,7 @@ const loadSavedItems = () => {
 export const saveItemToDb = createAsyncThunk(
   'savedItems/saveToDb',
   async (item, { getState }) => {
-    const response = await fetch('http://localhost:8000/Api/favorites', {
+    const response = await fetch('https://fed-storefront-backend-sachitha.onrender.com/Apifavorites', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
