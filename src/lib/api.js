@@ -46,11 +46,16 @@ export const Api = createApi({
       query: (orderData) => {
         const formattedOrder = {
           items: orderData.items.map(item => ({
-            productId: item.product._id,
-            quantity: item.quantity,
-            price: parseFloat(item.product.price)
+            product: {
+              _id: item.product._id,
+              name: item.product.name,
+              price: Number(item.product.price),
+              image: item.product.image,
+              description: item.product.description
+            },
+            quantity: item.quantity
           })),
-          shippingAddress: orderData.address, // Changed from address to shippingAddress
+          shippingAddress: orderData.shippingAddress
         };
 
         return {
