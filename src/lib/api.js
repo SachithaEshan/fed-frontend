@@ -48,18 +48,19 @@ export const Api = createApi({
         method: "POST",
         body,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        validateStatus: (response, result) => {
-          if (response.status >= 500) {
-            console.error('Server Error:', result);
-          }
-          return response.status === 200;
-        },
+        credentials: 'include'
       }),
-      async onError(err, variables, context) {
-        console.error('Order creation failed:', err);
-        throw new Error(err.data?.message || 'Failed to create order');
+      async onQueryStarted(args, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.error('Order creation failed:', error);
+          const errorMessage = error.error?.data?.message || 'Failed to create order';
+          throw new Error(errorMessage);
+        }
       }
     }),
     saveFavoriteItem: builder.mutation({
