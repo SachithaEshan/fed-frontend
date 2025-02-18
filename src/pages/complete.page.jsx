@@ -21,7 +21,7 @@ function CompletePage() {
         const token = await getToken();
         console.log('Fetching order with ID:', orderId);
         
-        const response = await fetch(`http://localhost:8000/Api/orders/${orderId}`, {
+        const response = await fetch(`https://fed-storefront-backend-sachitha.onrender.com/Api/orders/${orderId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
