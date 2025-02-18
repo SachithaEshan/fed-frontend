@@ -44,15 +44,10 @@ export const Api = createApi({
     }),
     createOrder: builder.mutation({
       query: (orderData) => {
+        // Format the order data to match backend expectations
         const formattedOrder = {
           items: orderData.items.map(item => ({
-            product: {
-              _id: item.product._id,
-              name: item.product.name,
-              price: Number(item.product.price),
-              image: item.product.image,
-              description: item.product.description
-            },
+            product: item.product,  // Keep the full product object
             quantity: item.quantity
           })),
           shippingAddress: orderData.shippingAddress
@@ -64,7 +59,8 @@ export const Api = createApi({
           body: formattedOrder,
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${window.Clerk?.session?.getToken()}` // Add auth token
           },
           credentials: 'include'
         };
@@ -72,10 +68,11 @@ export const Api = createApi({
       async onQueryStarted(args, { queryFulfilled }) {
         try {
           const response = await queryFulfilled;
-          console.log('Order created successfully:', response);
+          console.log('Order created successfully:', response.data);
+          return response.data;
         } catch (error) {
-          console.error('Order creation failed:', error);
-          throw new Error('Failed to create order');
+          console.error('Order creation error details:', error.error);
+          throw new Error(error.error?.message || 'Failed to create order');
         }
       }
     }),
