@@ -41,39 +41,35 @@ const ShippingAddressForm = ({ cart }) => {
   console.log(cart);
 
   function handleSubmit(values) {
-    // Log the cart data to verify structure
-    console.log('Cart data:', cart);
-
     const orderItems = cart.map(item => ({
       product: {
         _id: item.product._id,
         name: item.product.name,
-        price: item.product.price,
+        price: Number(item.product.price),
         image: item.product.image,
         description: item.product.description,
       },
       quantity: item.quantity
     }));
 
-    // Log the formatted order data
-    console.log('Formatted order data:', {
+    const orderData = {
       items: orderItems,
       shippingAddress: values
-    });
+    };
 
-    createOrder({
-      items: orderItems,
-      shippingAddress: {
-        line_1: values.line_1,
-        line_2: values.line_2,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        phone: values.phone,
-      },
-    });
-    
-    navigate("/shop/payment");
+    try {
+      createOrder(orderData)
+        .unwrap()
+        .then((response) => {
+          console.log('Order created successfully:', response);
+          navigate(`/complete/${response._id}`);
+        })
+        .catch((error) => {
+          console.error('Failed to create order:', error);
+        });
+    } catch (error) {
+      console.error('Error creating order:', error);
+    }
   }
 
   return (
