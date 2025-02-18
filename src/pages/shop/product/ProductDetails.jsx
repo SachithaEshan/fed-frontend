@@ -22,14 +22,14 @@ function ProductDetails() {
   const { data: product, isLoading, error } = useQuery({
     queryKey: ["product", productId],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8000/Api/products/${productId}`);
+      const response = await fetch(`https://fed-storefront-backend-sachitha.onrender.com/Api/products/${productId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch product");
       }
       return response.json();
     },
   });
-
+  
   if (isLoading) {
     return (
       <div className="container px-4 py-8 mx-auto">

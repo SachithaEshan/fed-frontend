@@ -27,7 +27,7 @@ function AdminProductCreatePage() {
     const fetchCategories = async () => {
         try {
             const token = await getToken();
-            const response = await fetch('http://localhost:8000/Api/categories', {
+            const response = await fetch('https://fed-storefront-backend-sachitha.onrender.com/Api/categories', {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -60,7 +60,7 @@ function AdminProductCreatePage() {
         
         try {
             const token = await getToken();
-            const response = await fetch('http://localhost:8000/Api/products', {
+            const response = await fetch('https://fed-storefront-backend-sachitha.onrender.com/Api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

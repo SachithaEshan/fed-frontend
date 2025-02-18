@@ -14,7 +14,7 @@ function AdminProductsPage() {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('YOUR_API_ENDPOINT/products');
+            const response = await fetch('https://fed-storefront-backend-sachitha.onrender.com/Api/products');
             if (!response.ok) throw new Error('Failed to fetch products');
             const data = await response.json();
             setProducts(data);

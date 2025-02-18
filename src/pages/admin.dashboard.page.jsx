@@ -16,7 +16,7 @@ function AdminDashboardPage() {
     const fetchProducts = async () => {
         try {
             const token = await getToken();
-            const response = await fetch('http://localhost:8000/Api/products', {
+            const response = await fetch('https://fed-storefront-backend-sachitha.onrender.com/Api/products', {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -54,7 +54,7 @@ function AdminDashboardPage() {
 
         try {
             const token = await getToken();
-            const response = await fetch(`http://localhost:8000/Api/products/${productId}`, {
+            const response = await fetch(`https://fed-storefront-backend-sachitha.onrender.com/Api/products/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
