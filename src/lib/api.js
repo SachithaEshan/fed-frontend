@@ -61,24 +61,22 @@ export const Api = createApi({
           shippingAddress: orderData.shippingAddress
         };
 
-        // Log the formatted data
-        console.log('Formatted order data:', formattedOrder);
-
         return {
           url: 'orders',
           method: 'POST',
           body: formattedOrder,
           credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
           }
         };
       },
-      // Add error handling
+      // Add better error handling
       async onQueryStarted(arg, { queryFulfilled }) {
         try {
-          await queryFulfilled;
+          const { data } = await queryFulfilled;
+          console.log('Order created successfully:', data);
+          return data;
         } catch (error) {
           console.error('Detailed error:', error);
           throw error;
