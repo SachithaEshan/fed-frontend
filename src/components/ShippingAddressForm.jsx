@@ -47,7 +47,7 @@ const ShippingAddressForm = ({ cart }) => {
         name: item.product.name,
         price: Number(item.product.price),
         image: item.product.image,
-        description: item.product.description,
+        description: item.product.description
       },
       quantity: item.quantity
     }));
@@ -65,10 +65,19 @@ const ShippingAddressForm = ({ cart }) => {
           navigate(`/complete/${response._id}`);
         })
         .catch((error) => {
-          console.error('Failed to create order:', error);
+          console.error('Order creation failed:', error);
+          // Show error to user
+          form.setError('root', {
+            type: 'manual',
+            message: error.message || 'Failed to create order'
+          });
         });
     } catch (error) {
       console.error('Error creating order:', error);
+      form.setError('root', {
+        type: 'manual',
+        message: 'An unexpected error occurred'
+      });
     }
   }
 
