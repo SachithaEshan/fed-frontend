@@ -43,16 +43,26 @@ export const Api = createApi({
       query: (id) =>`orders/${id}`,
     }),
     createOrder: builder.mutation({
-      query: (body) => ({
-        url: `orders`,
-        method: "POST",
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        credentials: 'include'
-      }),
+      query: (orderData) => {
+        // First ensure we have a proper order structure
+        const formattedOrder = {
+          items: orderData.items,
+          totalAmount: orderData.totalAmount,
+          address: orderData.address, // Send as address instead of addressId
+          status: 'pending'
+        };
+
+        return {
+          url: `orders`,
+          method: "POST",
+          body: formattedOrder,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include'
+        };
+      },
       async onQueryStarted(args, { queryFulfilled }) {
         try {
           await queryFulfilled;
