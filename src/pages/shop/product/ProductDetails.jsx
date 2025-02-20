@@ -35,7 +35,7 @@ function ProductDetails() {
       <div className="container px-4 py-8 mx-auto">
         <div className="animate-pulse">
           <div className="mb-4 w-1/4 h-8 bg-gray-200 rounded"></div>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <div className="h-96 bg-gray-200 rounded"></div>
             <div className="space-y-4">
               <div className="w-1/2 h-8 bg-gray-200 rounded"></div>
@@ -81,63 +81,63 @@ function ProductDetails() {
 
   return (
     <>
-    <Navigation />
-    <div className="container px-4 py-8 mx-auto">
-      <div className="grid grid-cols-2 gap-8">
-        {/* Product Image */}
-        <div className="overflow-hidden p-8 bg-white rounded-lg">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="object-contain w-full h-full"
-          />
-        </div>
-
-        {/* Product Info */}
-        <div className="space-y-6">
-          <div className="flex justify-between items-start">
-            <h1 className="text-4xl font-bold">{product.name}</h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSave}
-              className={`${isSaved ? 'text-red-500' : 'text-gray-500'}`}
-            >
-              <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
-            </Button>
-          </div>
-          
-          <p className="text-2xl font-semibold">${product.price}</p>
-          
-          <Separator />
-          
-          <div>
-            <h2 className="mb-2 text-xl font-semibold">Description</h2>
-            <p className="text-gray-600">{product.description}</p>
+      <Navigation />
+      <div className="container px-4 py-8 mx-auto">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Product Image */}
+          <div className="overflow-hidden p-4 bg-white rounded-lg">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="object-contain w-full h-auto max-h-[400px] mx-auto"
+            />
           </div>
 
-          <div>
-            <p className={`text-sm ${product.stock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
-              {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
-            </p>
-          </div>
+          {/* Product Info */}
+          <div className="space-y-6">
+            <div className="flex justify-between items-start">
+              <h1 className="text-3xl font-bold sm:text-4xl">{product.name}</h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSave}
+                className={`${isSaved ? 'text-red-500' : 'text-gray-500'}`}
+              >
+                <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
+              </Button>
+            </div>
+            
+            <p className="text-xl font-semibold sm:text-2xl">${product.price}</p>
+            
+            <Separator />
+            
+            <div>
+              <h2 className="mb-2 text-lg font-semibold sm:text-xl">Description</h2>
+              <p className="text-gray-600">{product.description}</p>
+            </div>
 
-          <div className="flex gap-4">
-            <Button 
-              size="lg" 
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-              className="flex-1"
-            >
-              <ShoppingCart className="mr-2" />
-              {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-            </Button>
+            <div>
+              <p className={`text-sm ${product.stock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
+                {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Button 
+                size="lg" 
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                className="flex-1"
+              >
+                <ShoppingCart className="mr-2" />
+                {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
 
-export default ProductDetails; 
+export default ProductDetails;

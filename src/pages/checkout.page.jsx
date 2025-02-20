@@ -63,7 +63,7 @@
 //           <h2 className="text-4xl font-bold">Checkout Page</h2>
 //           <div className="mt-4">
 //             <h3 className="text-3xl font-semibold">Order Details</h3>
-//             <div className="grid grid-cols-4 mt-2 gap-x-4">
+//             <div className="grid grid-cols-4 gap-x-4 mt-2">
 //             <div>
 //                 {cart.map((item,index)=>(
 //                     <div key={index}>
@@ -78,7 +78,7 @@
 //           </div>
 //           <div className="mt-4">
 //             <h3 className="text-3xl font-semibold">Enter Shipping Address</h3>
-//             <div className="w-1/2 mt-2">
+//             <div className="mt-2 w-1/2">
 //               <ShippingAddressForm cart={cart} />
 //             </div>
 //           </div>
@@ -112,71 +112,85 @@ export default function CheckoutPage() {
   const total = subtotal + tax;
 
   return (
-    <div className="container px-4 py-8 mx-auto">
-      {/* Title */}
-      <h1 className="flex items-center mb-8 text-3xl font-bold">
-        <ShoppingCart className="mr-2" />
-        Checkout
-      </h1>
+    <div className="container px-4 py-6 mx-auto min-h-screen md:py-8 lg:py-12">
+      {/* Header */}
+      <div className="mb-6 md:mb-8">
+        <h1 className="flex gap-2 items-center text-2xl font-bold md:text-3xl">
+          <ShoppingCart className="w-6 h-6 md:h-8 md:w-8" />
+          Checkout
+        </h1>
+      </div>
 
-      {/* Grid Layout: Cart Items & Order Summary */}
-      <div className="grid gap-8 md:grid-cols-3">
-        {/* Cart Items Section */}
-        <div className="md:col-span-2">
-          <div className="grid gap-4 md:grid-cols-2">
-            {cart.map((item) => (
-              <Card key={item.product._id} className="mb-4">
-                <CardContent className="p-4">
-                  <div className="flex flex-col items-center">
-                    {/* Product Image */}
-                    <div className="relative w-32 h-32 overflow-hidden rounded-lg">
-                      <img
-                        src={item.product.image || "/placeholder.svg"}
-                        alt={item.product.name}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    {/* Product Name, Price & Quantity */}
-                    <div className="mt-4 text-center">
-                      <h2 className="text-lg font-semibold">{item.product.name}</h2>
-                      <p className="font-bold">${item.product.price}</p>
-                      <p>Qty: {item.quantity}</p>
+      {/* Layout */}
+      <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
+        {/* Cart Items */}
+        <div className="space-y-4 lg:col-span-8">
+          {cart.map((item) => (
+            <Card key={item.product._id} className="overflow-hidden">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                  {/* Product Image */}
+                  <div className="overflow-hidden relative w-full bg-gray-100 rounded-md sm:w-32 md:w-40 aspect-square">
+                    <img
+                      src={item.product.image || "/placeholder.svg"}
+                      alt={item.product.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="flex flex-col flex-1">
+                    <h3 className="mb-2 text-lg font-semibold md:text-xl">
+                      {item.product.name}
+                    </h3>
+                    <p className="mb-4 text-sm text-gray-600 line-clamp-2">
+                      {item.product.description}
+                    </p>
+                    <div className="flex gap-4 items-center">
+                      <span className="text-lg font-semibold">
+                        ${(item.product.price * item.quantity).toFixed(2)}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        (${item.product.price} each)
+                      </span>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Order Summary Section */}
-        <div>
-          <Card>
+        {/* Order Summary */}
+        <div className="lg:col-span-4">
+          <Card className="sticky top-4">
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="text-xl">Order Summary</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <div className="flex justify-between">
+                <div className="flex justify-between text-sm md:text-base">
                   <span>Subtotal</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Tax</span>
+                <div className="flex justify-between text-sm md:text-base">
+                  <span>Tax (10%)</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
-                <Separator className="my-2" />
-                <div className="flex justify-between font-bold">
+                <Separator />
+                <div className="flex justify-between text-base font-bold md:text-lg">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
+
+              <div className="pt-4">
+                <Button className="w-full" size="lg" onClick={() => navigate("/shop/payment")}>Proceed to Payment</Button>
+                <Button variant="outline" className="mt-2 w-full" size="lg" asChild>
+                  <Link to="/shop">Continue Shopping</Link>
+                </Button>
+              </div>
             </CardContent>
-            <CardFooter>
-              {/* <Button className="w-full" onClick={() => navigate("/shop/payment")}>
-                Proceed to Payment
-              </Button> */}
-            </CardFooter>
           </Card>
         </div>
       </div>
@@ -195,5 +209,6 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
 
 

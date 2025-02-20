@@ -52,19 +52,18 @@ function ProductCard({ _id, name, price, image, description, stock, inventory })
 
   return (
     <Card className="overflow-hidden rounded-lg border border-gray-200 shadow-md">
-      <div className="relative p-4 h-80 rounded-lg bg-card">
-        
+      <div className="relative p-4 h-48 rounded-lg sm:h-64 md:h-80 bg-card">
         <button
           onClick={handleSave}
-          className="absolute top-6 right-6 p-2 rounded-full transition-colors bg-white/80 hover:bg-white"
+          className="absolute top-4 right-4 p-2 rounded-full transition-colors bg-white/80 hover:bg-white"
         >
           <Heart
-            className={`w-5 h-5 transition-colors ${
+            className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${
               isSaved ? "fill-red-500 stroke-red-500" : "stroke-gray-600"
             }`}
           />
         </button>
-        <Link to={`/shop/${_id}`} className="block">
+        <Link to={`/shop/${_id}`} className="block h-full">
           <img
             src={image}
             alt={name}
@@ -72,19 +71,17 @@ function ProductCard({ _id, name, price, image, description, stock, inventory })
           />
         </Link>
       </div>
-      <div className="flex justify-between items-center px-4 mt-4">
-        <h2 className="text-2xl font-semibold">{name}</h2>
-        <span className="block text-lg font-medium">${price}</span>
-      </div>
-      <div className="px-4 mt-2">
-        <p className="text-sm">{description}</p>
-        <p className={`text-sm mt-1 ${actualStock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
+      <div className="flex flex-col gap-2 p-4">
+        <div className="flex justify-between items-start">
+          <h2 className="text-lg font-semibold sm:text-xl line-clamp-2">{name}</h2>
+          <span className="text-base font-medium sm:text-lg">${price}</span>
+        </div>
+        <p className="text-xs sm:text-sm line-clamp-2">{description}</p>
+        <p className={`text-xs sm:text-sm ${actualStock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
           {actualStock === 0 ? 'Out of Stock' : `${actualStock} in stock`}
         </p>
-      </div>
-      <div className="p-4 mt-1">
         <Button 
-          className="w-full" 
+          className="mt-2 w-full" 
           onClick={handleClick}
           disabled={actualStock === 0}
         >

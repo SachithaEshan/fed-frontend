@@ -75,9 +75,9 @@ function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders?.map((order) => (
-            <Card key={order._id}>
+            <Card key={order._id} className="p-4">
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                   <CardTitle>Order #{order._id}</CardTitle>
                   <Badge className={getStatusColor(order.orderStatus)}>
                     {order.orderStatus}
@@ -86,30 +86,24 @@ function OrdersPage() {
                <p className="text-sm text-gray-500">
                    Placed on {order.createdAt ? format(new Date(order.createdAt), 'PPP') : "Unknown Date"}
                 </p>
-                {/* console.log(orders); */}
               </CardHeader>
               
               <CardContent>
                 <div className="space-y-4">
-                  {/* Order Items */}
                   <div>
                     <h3 className="mb-2 font-semibold">Items</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       {order.items.map((item, index) => (
                         <div key={index} className="flex gap-4">
                           <img
                             src={item.product.image}
                             alt={item.product.name}
-                            className="object-cover w-20 h-20 rounded"
+                            className="object-cover w-16 h-16 rounded sm:w-20 sm:h-20"
                           />
                           <div>
-                            <p className="font-medium">{item.product.name}</p>
-                            <p className="text-sm text-gray-500">
-                              Quantity: {item.quantity}
-                            </p>
-                            <p className="text-sm font-medium">
-                              ${item.product.price}
-                            </p>
+                            <p className="text-sm font-medium sm:text-base">{item.product.name}</p>
+                            <p className="text-xs text-gray-500 sm:text-sm">Quantity: {item.quantity}</p>
+                            <p className="text-sm font-medium">${item.product.price}</p>
                           </div>
                         </div>
                       ))}
@@ -118,7 +112,6 @@ function OrdersPage() {
 
                   <Separator />
 
-                  {/* Shipping Address */}
                   <div>
                     <h3 className="mb-2 font-semibold">Shipping Address</h3>
                     <div className="text-sm text-gray-600">
@@ -137,8 +130,7 @@ function OrdersPage() {
 
                   <Separator />
 
-                  {/* Order Total */}
-                  <div className="flex justify-between items-center font-medium">
+                  <div className="flex flex-col font-medium sm:flex-row sm:justify-between sm:items-center">
                     <span>Total</span>
                     <span>
                       ${order.items.reduce(
@@ -154,9 +146,7 @@ function OrdersPage() {
         </div>
       )}
     </div>
-    //to check addressId
-    
   );
 }
 
-export default OrdersPage; 
+export default OrdersPage;

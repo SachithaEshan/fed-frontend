@@ -1,139 +1,169 @@
 import { Card } from "@/components/ui/card";
-import { useSelector , useDispatch} from "react-redux";
-import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react"
-//import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { useSelector, useDispatch } from "react-redux";
+import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { removeItem, incrementQuantity, decrementQuantity } from "@/lib/features/cartSlice";
 
+export default function CartItem() {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.value);
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + Number.parseFloat(item.product.price) * item.quantity,
+    0
+  );
+  const tax = subtotal * 0.1;
+  const total = subtotal + tax;
 
-//function CartItem({ item }) {
-//   return (
-//     <Card className="p-4">
-//       <div className="flex items-center space-x-4">
-//         <img
-//           src={item.product.image || "/placeholder.svg"}
-//           alt={item.product.name}
-//           className="object-cover w-16 h-16 rounded"
-//         />
-//         <div className="flex-1">
-//           <p className="font-medium">{item.product.name}</p>
-//           <p className="text-muted-foreground">${item.product.price}</p>
-//           <p className="text-sm">Quantity: {item.quantity}</p>
-//         </div>
-//       </div>
-//     </Card>
-//   );
+  if (cartItems.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 min-h-[60vh] flex flex-col items-center justify-center">
+        <ShoppingCart className="mb-4 w-16 h-16 text-gray-400" />
+        <h2 className="mb-4 text-2xl font-semibold text-gray-600">Your cart is empty</h2>
+        <Button asChild>
+          <Link to="/shop">Continue Shopping</Link>
+        </Button>
+      </div>
+    );
+  }
 
+  return (
+    <div className="container px-4 py-6 mx-auto min-h-screen md:py-8 lg:py-12">
+      {/* Header */}
+      <div className="mb-6 md:mb-8">
+        <h1 className="flex gap-2 items-center text-2xl font-bold md:text-3xl">
+          <ShoppingCart className="w-6 h-6 md:h-8 md:w-8" />
+          Your Cart
+          <span className="text-base font-normal text-gray-500 md:text-lg">
+            ({cartItems.length} {cartItems.length === 1 ? 'item' : 'items'})
+          </span>
+        </h1>
+      </div>
 
- 
-//}
+      {/* Main Content */}
+      <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
+        {/* Cart Items List */}
+        <div className="space-y-4 lg:col-span-8">
+          {cartItems.map((item) => (
+            <Card key={item.product._id} className="overflow-hidden">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+                  {/* Product Image */}
+                  <div className="overflow-hidden relative w-full bg-gray-100 rounded-md sm:w-32 md:w-40 aspect-square">
+                    <img
+                      src={item.product.image || "/placeholder.svg"}
+                      alt={item.product.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
 
-//export default CartItem;
+                  {/* Product Details */}
+                  <div className="flex flex-col flex-1">
+                    <div className="flex-1">
+                      <h3 className="mb-2 text-lg font-semibold md:text-xl">
+                        {item.product.name}
+                      </h3>
+                      <p className="mb-4 text-sm text-gray-600 line-clamp-2">
+                        {item.product.description}
+                      </p>
+                    </div>
 
-// my old code 
-
-        
-        export default function CartItem() {
-          const dispatch = useDispatch(); 
-          const cartItems = useSelector((state) => state.cart.value);
-          const subtotal = cartItems.reduce((acc, item) => acc + Number.parseFloat(item.product.price) * item.quantity, 0);
-          const tax = subtotal * 0.1; // Assuming 10% tax
-          const total = subtotal + tax;
-        //   const cart = useSelector((state)=>state.cart.value);
-            //console.log(cart);
-        
-          return (
-            <div className="container px-4 py-8 mx-auto">
-              <h1 className="flex items-center mb-8 text-3xl font-bold">
-                <ShoppingCart className="mr-2" />
-                Your Cart
-              </h1>
-              <div className="grid gap-8 md:grid-cols-3">
-                <div className="md:col-span-2">
-                  {cartItems.map((item) => (
-                    <Card key={item.product._id} className="mb-4">
-                      <CardContent className="p-4">
-                        <div className="flex items-center">
-                          <div className="overflow-hidden relative mr-4 w-24 h-24 rounded-lg">
-                            <img
-                              src={item.product.image || "/placeholder.svg"}
-                              alt={item.product.name}
-                              className="object-cover w-full h-full"
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <h2 className="text-xl font-semibold">{item.product.name}</h2>
-                            <p className="mt-1 text-sm text-gray-500">{item.product.description}</p>
-                            <div className="flex justify-between items-center mt-2">
-                              <p className="font-bold">${item.product.price}</p>
-                              <div className="flex gap-2 items-center">
-                                <Button 
-                                  variant="outline" 
-                                  size="icon" 
-                                  onClick={() => dispatch(decrementQuantity(item.product._id))}
-                                  disabled={item.quantity <= 1}
-                                >
-                                  <Minus className="w-4 h-4" />
-                                </Button>
-                                <span className="w-8 text-center">{item.quantity}</span>
-                                <Button 
-                                  variant="outline" 
-                                  size="icon" 
-                                  onClick={() => dispatch(incrementQuantity(item.product._id))}
-                                >
-                                  <Plus className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="flex justify-end p-4">
-                    <Button variant="outline" size="sm" onClick={() => dispatch(removeItem(item.product._id))}>
-                      <Trash2 className="mr-2 w-4 h-4" />
-                      Remove
-                    </Button>
-                  </CardFooter>
-                </Card>
-                  ))}
-                </div>
-                <div>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Order Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span>Subtotal</span>
-                          <span>${subtotal.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Tax</span>
-                          <span>${tax.toFixed(2)}</span>
-                        </div>
-                        <Separator className="my-2" />
-                        <div className="flex justify-between font-bold">
-                          <span>Total</span>
-                          <span>${total.toFixed(2)}</span>
-                        </div>
+                    {/* Price and Quantity Controls */}
+                    <div className="flex flex-wrap gap-4 justify-between items-center">
+                      <div className="flex gap-4 items-center">
+                        <span className="text-lg font-semibold">
+                          ${(item.product.price * item.quantity).toFixed(2)}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          (${item.product.price} each)
+                        </span>
                       </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full" asChild >
-                      <Link to="/shop/checkout">Proceed to Checkout </Link> 
-                      </Button>
-                      
-                    </CardFooter>
-                  </Card>
+
+                      <div className="flex gap-3 items-center">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => dispatch(decrementQuantity(item.product._id))}
+                          disabled={item.quantity <= 1}
+                          className="w-8 h-8"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </Button>
+                        <span className="w-8 font-medium text-center">
+                          {item.quantity}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => dispatch(incrementQuantity(item.product._id))}
+                          className="w-8 h-8"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end px-4 py-3 bg-gray-50">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => dispatch(removeItem(item.product._id))}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="mr-2 w-4 h-4" />
+                  Remove
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-4">
+          <Card className="sticky top-4">
+            <CardHeader>
+              <CardTitle className="text-xl">Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm md:text-base">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm md:text-base">
+                  <span>Tax (10%)</span>
+                  <span>${tax.toFixed(2)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-base font-bold md:text-lg">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
               </div>
-            </div>
-          );
-        }
-    
+
+              <div className="pt-4">
+                <Button className="w-full" size="lg" asChild>
+                  <Link to="/shop/checkout">Proceed to Checkout</Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="mt-2 w-full"
+                  size="lg"
+                  asChild
+                >
+                  <Link to="/shop">Continue Shopping</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
     
    

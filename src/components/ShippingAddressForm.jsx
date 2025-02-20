@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,15 +20,9 @@ const formSchema = z.object({
   city: z.string().min(1),
   state: z.string().min(1),
   zip_code: z.string().min(1),
-  phone: z.string().refine(
-    (value) => {
-      // This regex checks for a basic international phone number format
-      return /^\+?[1-9]\d{1,14}$/.test(value);
-    },
-    {
-      message: "Invalid phone number format",
-    }
-  ),
+  phone: z.string().refine((value) => /^\+?[1-9]\d{1,14}$/.test(value), {
+    message: "Invalid phone number format",
+  }),
 });
 
 const ShippingAddressForm = ({ cart }) => {
@@ -38,7 +31,6 @@ const ShippingAddressForm = ({ cart }) => {
   });
   const [createOrder, { isLoading, isError, data }] = useCreateOrderMutation();
   const navigate = useNavigate();
-  console.log(cart);
 
   function handleSubmit(values) {
     const orderItems = cart.map(item => ({
@@ -54,126 +46,45 @@ const ShippingAddressForm = ({ cart }) => {
 
     const orderData = {
       items: orderItems,
-      shippingAddress: {
-        line_1: values.line_1,
-        line_2: values.line_2,
-        city: values.city,
-        state: values.state,
-        zip_code: values.zip_code,
-        phone: values.phone
-      }
+      shippingAddress: values
     };
 
-    try {
-      createOrder(orderData)
-        .unwrap()
-        .then((response) => {
-          console.log('Order created successfully:', response);
-          navigate(`/complete/${response._id}`);
-        })
-        .catch((error) => {
-          console.error('Order creation failed:', error);
-          form.setError('root', {
-            type: 'manual',
-            message: error.data?.message || 'Failed to create order'
-          });
+    createOrder(orderData)
+      .unwrap()
+      .then(response => navigate(`/complete/${response._id}`))
+      .catch(error => {
+        form.setError('root', {
+          type: 'manual',
+          message: error.data?.message || 'Failed to create order'
         });
-    } catch (error) {
-      console.error('Error creating order:', error);
-      form.setError('root', {
-        type: 'manual',
-        message: 'An unexpected error occurred'
       });
-    }
   }
 
   return (
-    <div>
+    <div className="p-4 mx-auto max-w-lg md:p-6 lg:p-8">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-            <FormField
-              control={form.control}
-              name="line_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Line 1</FormLabel>
-                  <FormControl>
-                    <Input placeholder="16/1" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="line_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Line 2</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Main St" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Kadawatha" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="state"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State/Province</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Wester Province" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="zip_code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Zip Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="11850" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="+94702700100" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {["line_1", "line_2", "city", "state", "zip_code", "phone"].map(field => (
+              <FormField
+                key={field}
+                control={form.control}
+                name={field}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="capitalize">{field.name.replace("_", " ")}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={field.name} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
           </div>
-          <div className="mt-4">
+          <div className="flex justify-center mt-6">
             <Link to="/shop/payment">
-            <Button type="submit">Proceed to Payment</Button>
+              <Button type="submit" className="w-full md:w-auto">Proceed to Payment</Button>
             </Link>
           </div>
         </form>
