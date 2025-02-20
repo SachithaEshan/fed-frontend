@@ -105,55 +105,51 @@ function Products() {
   } = useGetCategoriesQuery();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
-  const [sortOrder, setSortOrder] = useState(null); // null, 'asc', or 'desc'
+  const [sortOrder, setSortOrder] = useState(null);
 
   const handleTabClick = (_id) => {
     setSelectedCategoryId(_id);
-    setSortOrder(null); // Reset sorting when switching categories
+    setSortOrder(null);
   };
 
   const handleSort = (order) => {
     setSortOrder(order);
   };
 
-  // Memoize the processed products
   const processedProducts = useMemo(() => {
     if (!products) return [];
-    
-    // First filter
-    const filtered = selectedCategoryId === "ALL"
-      ? products
-      : products.filter((product) => product.categoryId === selectedCategoryId);
-    
-    // Then sort if needed
+
+    const filtered =
+      selectedCategoryId === "ALL"
+        ? products
+        : products.filter((product) => product.categoryId === selectedCategoryId);
+
     if (!sortOrder) return filtered;
-    
-    return [...filtered].sort((a, b) => 
+
+    return [...filtered].sort((a, b) =>
       sortOrder === "asc" ? a.price - b.price : b.price - a.price
     );
   }, [products, selectedCategoryId, sortOrder]);
 
-  // Ensure "All" category is at the beginning
   const sortedCategories = useMemo(() => {
     if (!categories) return [];
-    const cats = categories.filter(cat => cat._id !== "ALL");
+    const cats = categories.filter((cat) => cat._id !== "ALL");
     return [{ _id: "ALL", name: "All" }, ...cats];
   }, [categories]);
 
   if (isProductsLoading || isCategoriesLoading) {
     return (
-      <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Products</h2>
-    
+      <section className="px-4 py-6 sm:px-8">
+        <h2 className="text-2xl font-bold sm:text-4xl">Our Top Products</h2>
         <Separator className="mt-2" />
-        <div className="flex gap-4 items-center mt-4">
-          <Skeleton className="h-16" />
+        <div className="flex flex-wrap gap-4 items-center mt-4">
+          <Skeleton className="w-full h-12 sm:h-16 sm:w-1/4" />
         </div>
-        <div className="grid grid-cols-4 gap-4 mt-4">
-          <Skeleton className="h-80" />
-          <Skeleton className="h-80" />
-          <Skeleton className="h-80" />
-          <Skeleton className="h-80" />
+        <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <Skeleton className="h-64 sm:h-80" />
+          <Skeleton className="h-64 sm:h-80" />
+          <Skeleton className="h-64 sm:h-80" />
+          <Skeleton className="h-64 sm:h-80" />
         </div>
       </section>
     );
@@ -161,13 +157,11 @@ function Products() {
 
   if (isProductsError || isCategoriesError) {
     return (
-      <section className="px-8 py-8">
-        <h2 className="text-4xl font-bold">Our Top Products</h2>
-    
+      <section className="px-4 py-6 sm:px-8">
+        <h2 className="text-2xl font-bold sm:text-4xl">Our Top Products</h2>
         <Separator className="mt-2" />
-        <div className="flex gap-4 items-center mt-4"></div>
         <div className="mt-4">
-          <p className="text-red-500">
+          <p className="text-sm text-red-500 sm:text-base">
             {isProductsError && productsError?.message}
             {isProductsError && isCategoriesError && " | "}
             {isCategoriesError && categoriesError?.message}
@@ -178,11 +172,11 @@ function Products() {
   }
 
   return (
-    <section className="px-8 py-8">
-      <h2 className="text-4xl font-bold">Our Top Products</h2>
+    <section className="px-4 py-6 sm:px-8">
+      <h2 className="text-2xl font-bold sm:text-4xl">Our Top Products</h2>
       <Separator className="mt-2" />
-      <div className="flex justify-between items-center p-8 mx-4">
-        <div className="flex gap-4 items-center mt-4">
+      <div className="flex flex-col gap-4 justify-between items-center mt-4 sm:flex-row">
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           {sortedCategories.map((category) => (
             <Tab
               key={category._id}
@@ -193,22 +187,22 @@ function Products() {
             />
           ))}
         </div>
-        <div className="flex gap-2 text-black w-fit">
+        <div className="flex gap-2">
           <button
             onClick={() => handleSort("asc")}
-            className={`border-2 px-2 py-1 rounded-md ${
-              sortOrder === "asc" ? "border-black" : "border-[#edeef1]"
+            className={`border-2 px-3 py-1 text-sm sm:text-base rounded-md ${
+              sortOrder === "asc" ? "border-black" : "border-gray-300"
             }`}
           >
-            Sort By Ascending
+            Sort Asc
           </button>
           <button
             onClick={() => handleSort("desc")}
-            className={`border-2 px-2 py-1 rounded-md ${
-              sortOrder === "desc" ? "border-black" : "border-[#edeef1]"
+            className={`border-2 px-3 py-1 text-sm sm:text-base rounded-md ${
+              sortOrder === "desc" ? "border-black" : "border-gray-300"
             }`}
           >
-            Sort By Descending
+            Sort Desc
           </button>
         </div>
       </div>

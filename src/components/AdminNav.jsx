@@ -18,7 +18,7 @@ function AdminNav() {
                 >
                     Create Product
                 </Link>
-                {/* Add more admin links here */}
+               
             </div>
         </div>
     );

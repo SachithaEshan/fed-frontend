@@ -48,7 +48,7 @@ import CartItem from "@/components/CartItem";
     //             <Card key={item.product._id} className="mb-4">
     //               <CardContent className="p-4">
     //                 <div className="flex items-center">
-    //                   <div className="relative w-24 h-24 mr-4 overflow-hidden rounded-lg">
+    //                   <div className="overflow-hidden relative mr-4 w-24 h-24 rounded-lg">
     //                     <img
     //                       src={item.product.image || "/placeholder.svg"}
     //                       alt={item.product.name}
@@ -58,7 +58,7 @@ import CartItem from "@/components/CartItem";
     //                   <div className="flex-grow">
     //                     <h2 className="text-xl font-semibold">{item.product.name}</h2>
     //                     <p className="mt-1 text-sm text-gray-500">{item.product.description}</p>
-    //                     <div className="flex items-center justify-between mt-2">
+    //                     <div className="flex justify-between items-center mt-2">
     //                       <p className="font-bold">${item.product.price}</p>
     //                       <p>Quantity: {item.quantity}</p>
     //                     </div>
@@ -67,7 +67,7 @@ import CartItem from "@/components/CartItem";
     //               </CardContent>
     //               <CardFooter className="flex justify-end p-4">
     //             <Button variant="outline" size="sm" onClick={() => dispatch(removeItem(item.product._id))}>
-    //               <Trash2 className="w-4 h-4 mr-2" />
+    //               <Trash2 className="mr-2 w-4 h-4" />
     //               Remove
     //             </Button>
     //           </CardFooter>
@@ -114,7 +114,7 @@ import CartItem from "@/components/CartItem";
   return (
   //   <main className="px-8">
   //     <h2 className="text-4xl font-bold">My Cart</h2>
-  //     <div className="grid w-1/2 grid-cols-2 mt-4 gap-x-4">
+  //     <div className="grid grid-cols-2 gap-x-4 mt-4 w-1/2">
   //       {cart.map((item, index) => (
   //         <CartItem key={index} item={item} />
   //       ))}
