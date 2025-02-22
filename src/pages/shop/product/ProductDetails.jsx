@@ -2,22 +2,24 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
-import { toggleSavedItem } from "@/lib/features/savedItemsSlice";
+import { toggleSavedItem, fetchSavedItems, removeItemFromDb, saveItemToDb } from "@/lib/features/savedItemsSlice";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useUser } from "@clerk/clerk-react";
 import Navigation from "@/components/Navigation";
+import PropTypes from 'prop-types';
 
-function ProductDetails() {
+function ProductDetails({ _id, name, price, image, description }) {
   const { productId } = useParams();
   const dispatch = useDispatch();
   const { isSignedIn } = useUser();
   const savedItems = useSelector((state) => state.savedItems.value);
+  const isSaved = savedItems.some(item => item._id === _id);
   
   // Check if this product is saved
-  const isSaved = savedItems.some(item => item._id === productId);
+  //const isSaved = savedItems.some(item => item._id === productId);
 
   const { data: product, isLoading, error } = useQuery({
     queryKey: ["product", productId],
@@ -58,7 +60,7 @@ function ProductDetails() {
   }
 
   const handleAddToCart = () => {
-    if (product.stock === 0) {
+    if (product.inventory === 0) {
       toast.error("This product is out of stock");
       return;
     }
@@ -66,18 +68,48 @@ function ProductDetails() {
     toast.success("Added to cart!");
   };
 
-  const handleSave = () => {
+  const handleSave = async (e) => {
+    e.stopPropagation();
     if (!isSignedIn) {
       toast.error("Please sign in to save items");
       return;
     }
 
-    dispatch(toggleSavedItem({
-      ...product,
-      stock: product.stock || product.inventory || 0
-    }));
-    toast.success(isSaved ? "Removed from saved items" : "Added to saved items");
+    const item = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      description: product.description,
+      inventory: product.inventory
+    };
+
+    try {
+      if (isSaved) {
+        await dispatch(removeItemFromDb(product._id)).unwrap();
+        toast.success("Removed from saved items");
+      } else {
+        await dispatch(saveItemToDb(item)).unwrap();
+        toast.success("Added to saved items");
+      }
+      
+      dispatch(toggleSavedItem(item));
+      dispatch(fetchSavedItems());
+    } catch (error) {
+      console.error('Error updating saved items:', error);
+      toast.error(isSaved ? 
+        "Failed to remove from saved items" : 
+        "Failed to add to saved items"
+      );
+    }
   };
+
+  //   dispatch(toggleSavedItem({
+  //     ...product,
+  //     inventory:  product.inventory || 0
+  //   }));
+  //   toast.success(isSaved ? "Removed from saved items" : "Added to saved items");
+  // };
 
   return (
     <>
@@ -98,12 +130,14 @@ function ProductDetails() {
             <div className="flex justify-between items-start">
               <h1 className="text-3xl font-bold sm:text-4xl">{product.name}</h1>
               <Button
-                variant="ghost"
-                size="icon"
+                // variant="ghost"
+                // size="icon"
                 onClick={handleSave}
-                className={`${isSaved ? 'text-red-500' : 'text-gray-500'}`}
+                className='rounded-full transition-colors bg-white/80 hover:bg-white'
               >
-                <Heart className={`h-6 w-6 ${isSaved ? 'fill-current' : ''}`} />
+                <Heart className={`w-6 h-6 sm:w-7 sm:h-7 transition-colors ${
+              isSaved ? "fill-red-500 stroke-red-500" : "stroke-gray-600"
+            }`} />
               </Button>
             </div>
             
@@ -117,8 +151,8 @@ function ProductDetails() {
             </div>
 
             <div>
-              <p className={`text-sm ${product.stock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
-                {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
+              <p className={`text-sm ${product.inventory < 10 ? 'text-red-500' : 'text-gray-500'}`}>
+                {product.inventory === 0 ? 'Out of Stock' : `${product.inventory} in stock`}
               </p>
             </div>
 
@@ -126,11 +160,11 @@ function ProductDetails() {
               <Button 
                 size="lg" 
                 onClick={handleAddToCart}
-                disabled={product.stock === 0}
+                disabled={product.inventory === 0}
                 className="flex-1"
               >
                 <ShoppingCart className="mr-2" />
-                {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                {product.inventory === 0 ? 'Out of Stock' : 'Add to Cart'}
               </Button>
             </div>
           </div>
@@ -139,5 +173,14 @@ function ProductDetails() {
     </>
   );
 }
+
+ProductDetails.propTypes = {
+  _id: PropTypes.string,
+  name: PropTypes.string,
+  price: PropTypes.number,
+  image: PropTypes.string,
+  description: PropTypes.string,
+  inventory: PropTypes.number
+};
 
 export default ProductDetails;

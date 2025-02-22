@@ -13,7 +13,7 @@ function ProductCards(props) {
             price={product.price}
             image={product.image}
             description={product.description}
-            stock={product.stock}
+            //stock={product.stock}
             inventory={product.inventory}
           />
         );
@@ -30,7 +30,7 @@ ProductCards.propTypes = {
       price: PropTypes.number.isRequired,
       image: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      stock: PropTypes.number,
+      //stock: PropTypes.number,
       inventory: PropTypes.number,
     })
   ).isRequired,

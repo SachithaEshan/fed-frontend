@@ -1,5 +1,5 @@
 // Need to use the React-specific entry point to import createApi
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 
 // Define a service using a base URL and expected endpoints
 // export const Api = createApi({
@@ -15,6 +15,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 //     return headers;
 //   },
+
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const BASE_URL = 'https://fed-storefront-backend-sachitha.onrender.com/Api';
 
 export const Api = createApi({
@@ -44,9 +46,6 @@ export const Api = createApi({
     }),
     createOrder: builder.mutation({
       query: (orderData) => {
-        // Log the order data for debugging
-        console.log('Sending order data:', orderData);
-
         const formattedOrder = {
           items: orderData.items.map(item => ({
             product: {
@@ -70,17 +69,6 @@ export const Api = createApi({
             'Content-Type': 'application/json'
           }
         };
-      },
-      // Add better error handling
-      async onQueryStarted(arg, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          console.log('Order created successfully:', data);
-          return data;
-        } catch (error) {
-          console.error('Detailed error:', error);
-          throw error;
-        }
       }
     }),
     saveFavoriteItem: builder.mutation({
@@ -98,6 +86,7 @@ export const Api = createApi({
     }),
   }),
 });
+
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints

@@ -185,7 +185,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="pt-4">
-                <Button className="w-full" size="lg" onClick={() => navigate("/shop/payment")}>Proceed to Payment</Button>
+                {/* <Button className="w-full" size="lg" onClick={() => navigate("/shop/payment")}>Proceed to Payment</Button> */}
                 <Button variant="outline" className="mt-2 w-full" size="lg" asChild>
                   <Link to="/shop">Continue Shopping</Link>
                 </Button>

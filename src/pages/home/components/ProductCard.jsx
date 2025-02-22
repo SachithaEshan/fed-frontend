@@ -3,20 +3,20 @@ import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
 import { Heart } from "lucide-react";
-import { toggleSavedItem } from "@/lib/features/savedItemsSlice";
+import { toggleSavedItem, fetchSavedItems, removeItemFromDb, saveItemToDb } from "@/lib/features/savedItemsSlice";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
-function ProductCard({ _id, name, price, image, description, stock, inventory }) {
+function ProductCard({ _id, name, price, image, description,  inventory }) {
   const dispatch = useDispatch();
   const { isSignedIn } = useUser();
   const savedItems = useSelector((state) => state.savedItems.value);
   const isSaved = savedItems.some(item => item._id === _id);
 
   // Calculate actual stock value from either inventory or stock
-  const actualStock = stock || inventory || 0;
+  const actualStock =  inventory || 0;
 
   const handleClick = () => {
     dispatch(
@@ -26,28 +26,47 @@ function ProductCard({ _id, name, price, image, description, stock, inventory })
         price,
         image,
         description,
-        stock: actualStock,
+        inventory: actualStock,
       })
     );
   };
 
-  const handleSave = (e) => {
-    e.stopPropagation(); // Prevent the click from triggering the Link
+  const handleSave = async (e) => {
+    e.stopPropagation();
     if (!isSignedIn) {
       toast.error("Please sign in to save items");
       return;
     }
 
-    dispatch(
-      toggleSavedItem({
-        _id,
-        name,
-        price,
-        image,
-        description,
-        stock: actualStock,
-      })
-    );
+    const item = {
+      _id,
+      name,
+      price,
+      image,
+      description,
+      inventory: actualStock,
+    };
+
+    try {
+      if (isSaved) {
+        await dispatch(removeItemFromDb(_id)).unwrap();
+        toast.success("Removed from saved items");
+      } else {
+        await dispatch(saveItemToDb(item)).unwrap();
+        toast.success("Added to saved items");
+      }
+      
+      // Update local state
+      dispatch(toggleSavedItem(item));
+      // Refresh the saved items list
+      dispatch(fetchSavedItems());
+    } catch (error) {
+      console.error('Error updating saved items:', error);
+      toast.error(isSaved ? 
+        "Failed to remove from saved items" : 
+        "Failed to add to saved items"
+      );
+    }
   };
 
   return (
@@ -98,12 +117,12 @@ ProductCard.propTypes = {
   price: PropTypes.number.isRequired,
   image: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  stock: PropTypes.number,
+  //stock: PropTypes.number,
   inventory: PropTypes.number,
 };
 
 ProductCard.defaultProps = {
-  stock: 0,
+  //stock: 0,
   inventory: 0,
 };
 
