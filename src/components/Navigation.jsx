@@ -147,7 +147,7 @@ function Navigation(props){
 
             {/* Mobile Navigation */}
             {isMenuOpen && (
-                <div className="absolute right-0 left-0 top-full bg-white shadow-lg md:hidden">
+                <div className="absolute right-0 left-0 top-full z-50 bg-white shadow-lg md:hidden">
                     <div className="flex flex-col gap-4 p-4">
                         <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
                         <Link to="/shop" onClick={() => setIsMenuOpen(false)}>Shop</Link>
@@ -158,7 +158,6 @@ function Navigation(props){
             )}
                     
                     </div>
-                        {/* <Link to="/admin" onClick={() => setIsMenuOpen(false)}>Admin</Link> */}
                         <Link to="/shop/cart" onClick={() => setIsMenuOpen(false)} 
                               className="flex gap-2 items-center">
                             <span>{getCartQuantity()}</span>

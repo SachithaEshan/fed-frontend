@@ -1,35 +1,61 @@
 import { useUser } from "@clerk/clerk-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { clearSavedItems, fetchSavedItems } from "@/lib/features/savedItemsSlice";
 import ProductCards from "./home/components/ProductCards";
 
 const SavedItemsPage = () => {
-  const { user } = useUser();
+  const { isSignedIn } = useUser();
+  const dispatch = useDispatch();
   const savedItems = useSelector((state) => state.savedItems.value);
+  const status = useSelector((state) => state.savedItems.status);
   
-  console.log("Saved Items:", savedItems); // Debug log
+  useEffect(() => {
+    if (isSignedIn) {
+      dispatch(fetchSavedItems());
+    } else {
+      dispatch(clearSavedItems());
+    }
+  }, [isSignedIn, dispatch]);
 
-  // Transform saved items to match the product structure expected by ProductCards
-  const formattedProducts = savedItems.map(item => {
-    console.log("Individual item:", item); // Debug log
-    return {
-      ...item,
-      _id: item._id,
-      name: item.name,
-      price: parseFloat(item.price),
-      description: item.description,
-      image: item.image,
-      stock: item.stock || item.inventory || 0,
-      inStock: (item.stock > 0 || item.inventory > 0)
-    };
-  });
+  if (status === 'loading') {
+    return (
+      <div className="container px-4 py-8 mx-auto">
+        <h1 className="mb-6 text-2xl font-bold">Saved Items</h1>
+        <div className="py-8 text-center">
+          <p className="text-gray-500">Loading saved items...</p>
+        </div>
+      </div>
+    );
+  }
 
-  console.log("Formatted Products:", formattedProducts); // Debug log
+  if (status === 'failed') {
+    return (
+      <div className="container px-4 py-8 mx-auto">
+        <h1 className="mb-6 text-2xl font-bold">Saved Items</h1>
+        <div className="py-8 text-center">
+          <p className="text-red-500">Error loading saved items. Please try again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const formattedProducts = savedItems.map(item => ({
+    ...item,
+    price: parseFloat(item.price),
+    inventory: item.inventory || 0,
+    inStock: (item.inventory > 0)
+  }));
 
   return (
     <div className="container px-4 py-8 mx-auto">
       <h1 className="mb-6 text-2xl font-bold">Saved Items</h1>
       
-      {savedItems?.length === 0 ? (
+      {!isSignedIn ? (
+        <div className="py-8 text-center">
+          <p className="text-gray-500">Please sign in to view your saved items</p>
+        </div>
+      ) : savedItems?.length === 0 ? (
         <div className="py-8 text-center">
           <p className="text-gray-500">No saved items yet</p>
         </div>

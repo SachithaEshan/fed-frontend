@@ -15,7 +15,9 @@ function PaymentPage() {
     return <Navigate to="/" />;
   }
 
-  const totalPrice = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const subtotal = cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const tax = subtotal * 0.1; // 10% tax
+  const totalPrice = subtotal + tax;
 
   return (
     <div className="container px-4 py-8 mx-auto">
@@ -38,7 +40,7 @@ function PaymentPage() {
                     />
                     <div>
                       <p className="text-lg font-semibold">{item.product.name}</p>
-                      <p className="text-gray-600">${item.product.price.toFixed(2)}</p>
+                      <p className="text-gray-600">${totalPrice.toFixed(2)}</p>
                       <p className="text-gray-600">Quantity: {item.quantity}</p>
                     </div>
                   </div>

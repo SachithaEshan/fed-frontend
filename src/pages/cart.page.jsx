@@ -1,11 +1,11 @@
 import { useSelector , useDispatch} from "react-redux";
-import { ShoppingCart, Trash2 } from "lucide-react"
-//import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Link } from "react-router-dom";
-import { removeItem } from "@/lib/features/cartSlice";
+// import { ShoppingCart, Trash2 } from "lucide-react"
+// //import Image from "next/image"
+// import { Button } from "@/components/ui/button"
+// import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Separator } from "@/components/ui/separator"
+// import { Link } from "react-router-dom";
+// import { removeItem } from "@/lib/features/cartSlice";
 import CartItem from "@/components/CartItem";
 
 
